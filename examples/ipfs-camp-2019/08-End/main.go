@@ -16,7 +16,7 @@ import (
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	tls "github.com/libp2p/go-libp2p-tls"
 	yamux "github.com/libp2p/go-libp2p-yamux"
-	"github.com/libp2p/go-libp2p/p2p/discovery/mdns"
+	// "github.com/libp2p/go-libp2p/p2p/discovery/mdns"
 	"github.com/libp2p/go-tcp-transport"
 	ws "github.com/libp2p/go-ws-transport"
 	"github.com/multiformats/go-multiaddr"
@@ -48,8 +48,8 @@ func main() {
 	security := libp2p.Security(tls.ID, tls.New)
 
 	listenAddrs := libp2p.ListenAddrStrings(
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip4/0.0.0.0/tcp/0/ws",
+		"/ip6/::1/tcp/0/ws",
+		"/ip6/::1/tcp/0",
 	)
 
 	var dht *kaddht.IpfsDHT
@@ -89,8 +89,10 @@ func main() {
 	for _, addr := range host.Addrs() {
 		fmt.Println("Listening on", addr)
 	}
+	fmt.Println(host.ID())
 
-	targetAddr, err := multiaddr.NewMultiaddr("/ip4/127.0.0.1/tcp/63785/p2p/QmWjz6xb8v9K4KnYEwP5Yk75k5mMBCehzWFLCvvQpYxF3d")
+
+	targetAddr, err := multiaddr.NewMultiaddr("/ip6/::1/tcp/45141/p2p/QmP7thb4KUpb1K8QKLoUBk2ZdnsqX41bsy2Sf5ZzKeyGDP")
 	if err != nil {
 		panic(err)
 	}
@@ -107,10 +109,10 @@ func main() {
 
 	fmt.Println("Connected to", targetInfo.ID)
 
-	mdns := mdns.NewMdnsService(host, "", &mdnsNotifee{h: host, ctx: ctx})
-	if err := mdns.Start(); err != nil {
-		panic(err)
-	}
+	// mdns := mdns.NewMdnsService(host, "", &mdnsNotifee{h: host, ctx: ctx})
+	// if err := mdns.Start(); err != nil {
+	// 	panic(err)
+	// }
 
 	err = dht.Bootstrap(ctx)
 	if err != nil {
